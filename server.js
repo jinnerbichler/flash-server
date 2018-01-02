@@ -197,6 +197,15 @@ app.get('/flash', function (req, res) {
     res.json(storage.get('flash'));
 });
 
+// -------------------------------------------------
+// -------------- Get Balance -----------------
+// -------------------------------------------------
+app.get('/balance', function (req, res) {
+    const flash = storage.get('flash');
+    const balance = flash.flash.deposit[flash.userIndex];
+    res.json({balance: balance});
+});
+
 // error handler
 app.use(function (err, req, res, next) {
     res.status(400).json(err);
