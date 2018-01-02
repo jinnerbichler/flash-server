@@ -25,7 +25,7 @@ docker run --rm -it -p "3001:3000" -e "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSE
 Run
 
 ```
-docker-compose.yml up --build
+docker-compose up --build
 ```
 
 in order to execute the example application in `example/client.py`.
