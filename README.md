@@ -20,7 +20,7 @@ docker build -t jinnerbichler/flash-server .
 docker run --rm -it -p "3001:3000" -e "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSER" jinnerbichler/flash-server
 ```
 
-## Example Setup
+## Demonstration Setup
 
 Run
 
