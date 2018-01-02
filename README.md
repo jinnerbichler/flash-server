@@ -1,6 +1,6 @@
-# IOTA Flash Server
+# Generic IOTA Flash Server
 
-This project basically wraps IOTA flash functionalities inside an Express web server, which makes it possible to build non-Javascript Flash applications.
+This project basically wraps generic IOTA flash functionalities inside an Express web server, which makes it possible to build non-Javascript Flash applications.
 
 ## Docker Build/Run
 
