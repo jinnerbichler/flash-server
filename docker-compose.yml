@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+
+  flash_one:
+    build: .
+    environment:
+      - "IOTA_SEED=USERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSER"
+    ports:
+      - "3000:3000"
+
+  flash_two:
+    build: .
+    environment:
+      - "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSER"
+    ports:
+      - "3001:3000"
+
+  client:
+    build: example
+    depends_on:
+      - flash_one
+      - flash_two
