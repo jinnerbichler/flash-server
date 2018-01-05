@@ -106,7 +106,7 @@ app.post('/multisignature', validate(schemas.multisignature), function (req, res
         multisignatureAddresses[i - 1].children.push(multisignatureAddresses[i])
 
     // set deposit address
-    flash.flash.depositAddress =    IOTA.utils.addChecksum(multisignatureAddresses[0].address);
+    flash.flash.depositAddress = IOTA.utils.addChecksum(multisignatureAddresses[0].address);
 
     // set Flash root
     flash.flash.root = multisignatureAddresses.shift();
@@ -129,6 +129,7 @@ app.post('/settlement', validate(schemas.settlement), function (req, res) {
     let flash = storage.get('flash');
     flash.flash.settlementAddresses = settlementAddresses;
     storage.set('flash', flash);
+
     res.json(flash);
 });
 
@@ -200,7 +201,7 @@ app.post('/close', function (req, res) {
 });
 
 // -------------------------------------------------
-// ------------- Fund Flash Channel-----------------
+// ------------- Fund Channel-----------------
 // -------------------------------------------------
 app.post('/fund', function (req, res) {
 
@@ -216,7 +217,43 @@ app.post('/fund', function (req, res) {
 
     // initial transer
     console.log(`Funding channel: ${JSON.stringify(transfers)}`);
-    IOTA.api.sendTransfer(SEED, flash.depth, IRI_MIN_WEIGHT,transfers, {}, function (error, finalTransactions) {
+    IOTA.api.sendTransfer(SEED, flash.depth, IRI_MIN_WEIGHT, transfers, {}, function (error, finalTransactions) {
+
+        if( error != null)
+            res.json(error);
+
+        res.json(finalTransactions);
+    });
+});
+
+// -------------------------------------------------
+// ------------- Finalize Channel-----------------
+// -------------------------------------------------
+app.post('/finalize', function (req, res) {
+
+    console.log(`Finalizing channel`);
+
+    const flash = storage.get('flash'); // ToDo: validate flash object (e.g. multisignatures, settlement addresses, ...)
+
+    // validate bundles
+    if( flash.bundles.length !== 1)
+        res.status(401);
+
+    // create trytes for bundle
+    let bundleTrytes = [];
+    const bundle = flash.bundles[0];
+    bundle.forEach(function (tx) {
+        bundleTrytes.push(IOTA.utils.transactionTrytes(tx))
+    });
+    bundleTrytes = bundleTrytes.reverse();
+
+    // send trytes
+    IOTA.api.sendTrytes(bundleTrytes, flash.depth, IRI_MIN_WEIGHT, {}, function (error, finalTransactions) {
+
+        if( error != null)
+            res.json(error);
+
+        storage.set('flash', {});
         res.json(finalTransactions);
     });
 });
