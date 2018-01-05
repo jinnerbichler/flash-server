@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const validate = require('express-validation');
+const iotaLib = require('iota.lib.js');
 const transfer = require("./lib/iota.flash.js/lib/transfer");
 const multisig = require("./lib/iota.flash.js/lib/multisig");
 const flashUtils = require("./lib/flash-utils");
@@ -9,6 +10,11 @@ const storage = require("./lib/storage");
 const schemas = require("./lib/schemas");
 
 const SEED = process.env.IOTA_SEED;  // should never leave server!
+const IRI_HOST = process.env.IRI_HOST;
+const IRI_PORT = process.env.IRI_PORT;
+const IRI_TESTNET = process.env.IRI_TESTNET || false;
+const IRI_MIN_WEIGHT = IRI_TESTNET ? 13 : 18;
+const IOTA = new iotaLib({'host': IRI_HOST, 'port': IRI_PORT});
 
 let app = express();
 app.use(bodyParser.json());
@@ -96,12 +102,15 @@ app.post('/multisignature', validate(schemas.multisignature), function (req, res
     flash.flash.remainderAddress = multisignatureAddresses.shift();
 
     // nest trees
-    for (let i = 1; i < multisignatureAddresses.length; i++) {
+    for (let i = 1; i < multisignatureAddresses.length; i++)
         multisignatureAddresses[i - 1].children.push(multisignatureAddresses[i])
-    }
+
+    // set deposit address
+    flash.flash.depositAddress =    IOTA.utils.addChecksum(multisignatureAddresses[0].address);
 
     // set Flash root
     flash.flash.root = multisignatureAddresses.shift();
+
 
     // update flash object
     storage.set('flash', flash);
@@ -115,7 +124,7 @@ app.post('/multisignature', validate(schemas.multisignature), function (req, res
 app.post('/settlement', validate(schemas.settlement), function (req, res) {
 
     const settlementAddresses = req.body.settlementAddresses;
-    console.log(`Adding ${settlementAddresses.length} settlement addresses`);
+    console.log(`Adding ${settlementAddresses.length} settlement addresses: ${JSON.stringify(settlementAddresses)}`);
 
     let flash = storage.get('flash');
     flash.flash.settlementAddresses = settlementAddresses;
@@ -191,6 +200,29 @@ app.post('/close', function (req, res) {
 });
 
 // -------------------------------------------------
+// ------------- Fund Flash Channel-----------------
+// -------------------------------------------------
+app.post('/fund', function (req, res) {
+
+    const flash = storage.get('flash'); // ToDo: validate flash object (e.g. multisignatures, settlement addresses, ...)
+
+    // create transfer object
+    const transfers = [{
+        'address': flash.flash.depositAddress,
+        'value': flash.flash.deposit[flash.userIndex],
+        'message': 'CHANNELFUND',
+        'tag': 'FLASH'
+    }];
+
+    // initial transer
+    console.log(`Funding channel: ${JSON.stringify(transfers)}`);
+    IOTA.api.sendTransfer(SEED, flash.depth, IRI_MIN_WEIGHT,transfers, {}, function (error, finalTransactions) {
+        res.json(finalTransactions);
+    });
+});
+
+
+// -------------------------------------------------
 // -------------- Get Flash Object -----------------
 // -------------------------------------------------
 app.get('/flash', function (req, res) {
@@ -198,7 +230,7 @@ app.get('/flash', function (req, res) {
 });
 
 // -------------------------------------------------
-// -------------- Get Balance -----------------
+// -------------- Get Balance ----------------------
 // -------------------------------------------------
 app.get('/balance', function (req, res) {
     const flash = storage.get('flash');
@@ -208,6 +240,7 @@ app.get('/balance', function (req, res) {
 
 // error handler
 app.use(function (err, req, res, next) {
+    console.log(err);
     res.status(400).json(err);
     next();
 });
