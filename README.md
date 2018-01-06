@@ -13,7 +13,7 @@ docker run --rm -it -p "3000:3000" -e "IOTA_SEED=<SEED>" <TAG_NAME>
 
 The server is then reachable on `http://localhost:3000`. Please have a look at `server.js` and `example/client.py` to get an overview of the implemented functionalities.
 
-**Example**:
+**Executable Example**:
 
 ```
 docker build -t jinnerbichler/flash-server .
