@@ -5,6 +5,7 @@ const validate = require('express-validation');
 const iotaLib = require('iota.lib.js');
 const transfer = require("./lib/iota.flash.js/lib/transfer");
 const multisig = require("./lib/iota.flash.js/lib/multisig");
+const constants = require("./lib/iota.flash.js/lib/constants");
 const flashUtils = require("./lib/flash-utils");
 const storage = require("./lib/storage");
 const schemas = require("./lib/schemas");
@@ -15,6 +16,9 @@ const IRI_PORT = process.env.IRI_PORT;
 const IRI_TESTNET = process.env.IRI_TESTNET || false;
 const IRI_MIN_WEIGHT = IRI_TESTNET ? 13 : 18;
 const IOTA = new iotaLib({'host': IRI_HOST, 'port': IRI_PORT});
+
+// ensure binary tree
+constants.MAX_USES = 2;
 
 let app = express();
 app.use(bodyParser.json());
@@ -99,7 +103,7 @@ app.post('/multisignature', validate(schemas.multisignature), function (req, res
     flash.flash.remainderAddress = multisignatureAddresses.shift();
 
     let treeDigests = multisignatureAddresses.slice(0, flash.depth + 1);
-    flash.flash.digestPool = multisignatureAddresses.slice(flash.depth + 1);
+    flash.flash.multisigDigestPool = multisignatureAddresses.slice(flash.depth + 1);
 
     // intitial tree
     for (let i = 1; i < treeDigests.length; i++)
@@ -287,7 +291,6 @@ app.get('/balance', function (req, res) {
 app.use(function (err, req, res, next) {
     console.log(err);
     res.status(400).json(err);
-    next();
 });
 
 app.listen(3000, function () {

@@ -1,8 +1,20 @@
+import os
 import requests
 import logging
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
+USER_ONE_HOST = os.environ.get('USER_ONE_HOST', 'http://flash_one:3000')
+USER_ONE_SETTLEMENT = 'USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9U'
+USER_TWO_HOST = os.environ.get('USER_TWO_HOST', 'http://flash_two:3000')
+USER_TWO_SETTLEMENT = 'USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9U'
+
+SECURITY = 2
+TREE_DEPTH = 3
+SIGNERS_COUNT = 2
+BALANCE = 4000
+DEPOSIT = [2000, 2000]
 
 
 class FlashClient:
@@ -40,17 +52,6 @@ class FlashClient:
 
 # noinspection PyUnusedLocal
 def main():
-    USER_ONE_HOST = 'http://flash_one:3000'
-    USER_ONE_SETTLEMENT = 'USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9U'
-    USER_TWO_HOST = 'http://flash_two:3000'
-    USER_TWO_SETTLEMENT = 'USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9U'
-
-    SECURITY = 2
-    TREE_DEPTH = 4
-    SIGNERS_COUNT = 2
-    BALANCE = 4000
-    DEPOSIT = [2000, 2000]
-
     client_one = FlashClient(url=USER_ONE_HOST)
     client_two = FlashClient(url=USER_TWO_HOST)
 
@@ -101,7 +102,20 @@ def main():
     user_two_flash = client_two.apply(signedBundles=signed_bundles)
 
     ##########################################################
-    # Step 7: Closing channel
+    # Step 7: Performing multiple transactions
+    ##########################################################
+    num_transactions = 2 ** (TREE_DEPTH + 1) - 2  # minus first and closing transaction
+    for transaction_count in range(num_transactions):
+        logger.info('############# Performing transaction {} #############'.format(transaction_count))
+        transfers = [{'value': 1, 'address': USER_TWO_SETTLEMENT}]
+        bundles = client_one.transfer(transfers=transfers)
+        signed_bundles = client_one.sign(bundles=bundles)
+        signed_bundles = client_two.sign(bundles=signed_bundles)
+        user_one_flash = client_one.apply(signedBundles=signed_bundles)
+        user_two_flash = client_two.apply(signedBundles=signed_bundles)
+
+    ##########################################################
+    # Step 8: Closing channel
     ##########################################################
     logger.info('############# Closing channel #############')
     closing_bundles = client_one.close()
