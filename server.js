@@ -259,10 +259,16 @@ app.post('/finalize', function (req, res) {
     // send trytes
     IOTA.api.sendTrytes(bundleTrytes, flash.depth, IRI_MIN_WEIGHT, {}, function (error, finalTransactions) {
 
-        if( error != null)
+        if( error != null) {
+            console.log('Error while finalizing channel', error);
             res.json(error);
+        }
 
+        console.log('Send final trytes', finalTransactions);
+
+        // reset state
         storage.set('flash', {});
+
         res.json({
             finalTransactions: finalTransactions,
             flash: flash
