@@ -51,14 +51,11 @@ app.post('/init', validate(schemas.init), function (req, res) {
         }
     };
 
-    // create digests for the start of the channel
-    for (let i = 0; i < flash.depth + 1; i++) {
-
+    // create digests for the entire tree + remainder address
+    const numDigest = Math.pow(2, flash.depth + 1) - 1;
+    for (let digestIndex = flash.index; digestIndex < numDigest + 1 + flash.index; digestIndex++) {
         // create new digest
-        const digest = multisig.getDigest(SEED, flash.index, flash.security);
-
-        // increment key index
-        flash.index++;
+        const digest = multisig.getDigest(SEED, digestIndex, flash.security);
         flash.partialDigests.push(digest);
     }
 
@@ -101,21 +98,26 @@ app.post('/multisignature', validate(schemas.multisignature), function (req, res
     // set remainder address (same for all users)
     flash.flash.remainderAddress = multisignatureAddresses.shift();
 
-    // nest trees
-    for (let i = 1; i < multisignatureAddresses.length; i++)
-        multisignatureAddresses[i - 1].children.push(multisignatureAddresses[i])
+    let treeDigests = multisignatureAddresses.slice(0, flash.depth + 1);
+    flash.flash.digestPool = multisignatureAddresses.slice(flash.depth + 1);
+
+    // intitial tree
+    for (let i = 1; i < treeDigests.length; i++)
+        treeDigests[i - 1].children.push(treeDigests[i])
 
     // set deposit address
-    flash.flash.depositAddress = IOTA.utils.addChecksum(multisignatureAddresses[0].address);
+    flash.flash.depositAddress = IOTA.utils.addChecksum(treeDigests[0].address);
 
     // set Flash root
-    flash.flash.root = multisignatureAddresses.shift();
+    flash.flash.root = treeDigests[0];
 
+    // update flash index
+    flash.index = treeDigests.length + 1;
 
     // update flash object
     storage.set('flash', flash);
 
-    res.json(multisignatureAddresses)
+    res.json(treeDigests)
 });
 
 // -------------------------------------------------
@@ -157,7 +159,10 @@ app.post('/sign', validate(schemas.sign), function (req, res) {
     let bundles = req.body.bundles;
     console.log(`Signing ${bundles.length} transactions`);
 
+    // update tree if neccesarry
     let flash = storage.get('flash');
+    flashUtils.updateTree(flash);
+    storage.set('flash', flash);
 
     // get signatures for the bundles
     let signatures = flashUtils.signTransaction(flash, SEED, bundles);
@@ -254,7 +259,10 @@ app.post('/finalize', function (req, res) {
             res.json(error);
 
         storage.set('flash', {});
-        res.json(finalTransactions);
+        res.json({
+            finalTransactions: finalTransactions,
+            flash: flash
+        });
     });
 });
 
