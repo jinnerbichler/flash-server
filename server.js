@@ -206,6 +206,13 @@ app.post('/close', function (req, res) {
     let flash = storage.get('flash');
     let bundles = flashUtils.createTransaction(flash, flash.flash.settlementAddresses, true);
 
+    // set proper tags and messages
+    bundles.forEach(function (bundle) {
+       bundle.forEach(function (transaction) {
+           transaction.tag = 'FLASH9999999999999999999999';
+       })
+    });
+
     res.json(bundles);
 });
 
@@ -220,7 +227,7 @@ app.post('/fund', function (req, res) {
     const transfers = [{
         'address': flash.flash.depositAddress,
         'value': flash.flash.deposit[flash.userIndex],
-        'message': 'CHANNELFUND',
+        'message': 'FLASH9FUND',
         'tag': 'FLASH'
     }];
 
@@ -264,7 +271,7 @@ app.post('/finalize', function (req, res) {
             res.json(error);
         }
 
-        console.log('Send final trytes', finalTransactions);
+        console.log('Sucessfully attached final trytes!');
 
         // reset state
         storage.set('flash', {});

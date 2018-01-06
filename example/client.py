@@ -43,9 +43,16 @@ class FlashClient:
     def close(self, **kwargs):
         return self._post(path='/close', **kwargs)
 
+    def fund(self, **kwargs):
+        return self._post(path='/fund', **kwargs)
+
+    def finalize(self, **kwargs):
+        return self._post(path='/finalize', **kwargs)
+
     def _post(self, path, **kwargs):
         response = requests.post(self.url + path, json=kwargs)
-        logger.debug(response.text)
+        if response.status_code >= 400:
+            logger.info(response.text)
         response.raise_for_status()
         return response.json()
 
@@ -81,28 +88,37 @@ def main():
     user_two_flash = client_two.settlement(settlementAddresses=settlement_addresses)
 
     ##########################################################
-    # Step 4: Transfer IOTA within channel
+    # Step 4: Fund channel
+    ##########################################################
+    # logger.info('############# Funding channel #############')
+    # transactions_one = client_one.fund()
+    # transactions_two = client_two.fund()
+    # # ...wait for transactions to be confirmed
+    # logger.info('Fund channel: {}, {}'.format(transactions_one, transactions_two))
+
+    ##########################################################
+    # Step 5: Transfer IOTA within channel
     ##########################################################
     logger.info('############# Initiating transfer #############')
     transfers = [{'value': 200, 'address': USER_TWO_SETTLEMENT}]
     bundles = client_one.transfer(transfers=transfers)
 
     ##########################################################
-    # Step 5: Sign bundles
+    # Step 6: Sign bundles
     ##########################################################
     logger.info('############# Signing bundles #############')
     signed_bundles = client_one.sign(bundles=bundles)
     signed_bundles = client_two.sign(bundles=signed_bundles)
 
     ##########################################################
-    # Step 6: Applying signed bundles to Flash object
+    # Step 7: Applying signed bundles to Flash object
     ##########################################################
     logger.info('############# Applying signed bundles #############')
     user_one_flash = client_one.apply(signedBundles=signed_bundles)
     user_two_flash = client_two.apply(signedBundles=signed_bundles)
 
     ##########################################################
-    # Step 7: Performing multiple transactions
+    # Step 8: Performing multiple transactions
     ##########################################################
     num_transactions = 2 ** (TREE_DEPTH + 1) - 2  # minus first and closing transaction
     for transaction_count in range(num_transactions):
@@ -115,12 +131,18 @@ def main():
         user_two_flash = client_two.apply(signedBundles=signed_bundles)
 
     ##########################################################
-    # Step 8: Closing channel
+    # Step 9: Closing channel
     ##########################################################
     logger.info('############# Closing channel #############')
     closing_bundles = client_one.close()
     signed_bundles = client_one.sign(bundles=closing_bundles)
     signed_bundles = client_two.sign(bundles=signed_bundles)
+
+    ##########################################################
+    # Step 10: Finalizing channel
+    ##########################################################
+    # logger.info('############# Finalizing channel #############')
+    # finalisation = client_one.finalize()  # attaches final bundle to Tangle
 
     logger.info('Done!')
 
