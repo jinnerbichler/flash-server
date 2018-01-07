@@ -259,9 +259,9 @@ Transfers aggreed amount to users deposit address.
 
 **Note:** Requires interaction with an IRI node.
 
-### /finalize
-
 ------
+
+### /finalize
 
 Performs proper transfers after the channel was closed. 
 
@@ -272,16 +272,16 @@ Performs proper transfers after the channel was closed.
 
 **Note:** Requires interaction with an IRI node.
 
-### /flash
-
 ------
+
+### /flash
 
 * Type: `GET`
 * Response: Current state of Flash channel (i.e. Flash object)
 
-### /balance
-
 ------
+
+### /balance
 
 * Type: `GET`
 * Response: Remaining balance of user
