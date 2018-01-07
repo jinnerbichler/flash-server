@@ -18,7 +18,7 @@ const IRI_TESTNET = process.env.IRI_TESTNET || false;
 const IRI_MIN_WEIGHT = IRI_TESTNET ? 13 : 18;
 const IOTA = new iotaLib({'host': IRI_HOST, 'port': IRI_PORT});
 
-// password settings
+// authentication settings
 const AUTH_USERNAME = process.env.AUTH_USERNAME;
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD;
 
