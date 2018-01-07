@@ -1,10 +1,11 @@
 {
   "name": "flash-server",
   "version": "0.0.1",
-  "description": "Serverside Flash component",
+  "description": "Utility server for IOTA Flash channels",
   "main": "server.js",
-  "repository": "https://github.com/jinnerbichler/home-autoflashion",
+  "repository": "https://github.com/jinnerbichler/flash-server",
   "scripts": {
+    "dev": "node server.js",
     "auto": "nodemon server.js"
   },
   "author": "Johannes Innerbichler",

@@ -2,6 +2,13 @@
 
 This project basically wraps generic IOTA flash functionalities inside an Express web server, which makes it possible to build non-Javascript applications with Flash channels.
 
+Start with
+
+```
+npm install
+npm run dev
+```
+
 ## Configuration Parameters
 
 The following configrations can be set via setting the proper environment variable:
