@@ -1,19 +1,19 @@
 # Generic IOTA Flash Server
 
-This project basically wraps generic IOTA flash functionalities inside an Express web server, which makes it possible to build non-Javascript Flash applications.
+This project basically wraps generic IOTA flash functionalities inside an Express web server, which makes it possible to build non-Javascript applications with Flash channels.
 
 ## Configuration Parameters
 
-The following configrations can be done via setting the proper environment variable:
+The following configrations can be set via setting the proper environment variable:
 
 * `IOTA_SEED`(required): Seed of this Flash server (should never leave server)
 * `IRI_HOST`(optional): Host of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_PORT`(optional): Port of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_TESTNET`(optional, default=false): Testnet flag of IRI node.
-* `AUTH_USERNAME` (optional): Username of HTTP Basic authentication
-* `AUTH_PASSWORD` (optional): Password of HTTP Basic authentication
+* `AUTH_USERNAME` (optional): Username of HTTP basic authentication
+* `AUTH_PASSWORD` (optional): Password of HTTP basic authentication
 
-**HTTP Basic Authentication** cat be activated by setting `AUTH_USERNAME` and `AUTH_PASSWORD`..
+**HTTP Basic Authentication** cat be activated by setting `AUTH_USERNAME` and `AUTH_PASSWORD`.
 
 ## Docker Build
 
@@ -42,11 +42,11 @@ docker-compose up --build
 ```
 
 in order to execute the example application in `example/client.py`.
-It basically sets up two Flash server for two different users and performs a transfer.
+It basically sets up two Flash servers for two different users and performs multiple transfers.
 
 ## API Documentation
 
-In general the current state of the Flash channel is stored on the server. In this way the exchange of state objects is avoided.
+In general the state of the Flash channel is stored on the server. In this way the exchange of state objects is avoided.
 
 ### /init
 
@@ -55,7 +55,7 @@ Initializes the Flash channel
 * Type: `POST`
 * Content-Type: `application/json`
 * Payload: Parameters of channel to be initialized
-* Response: Intialized Flash object of user
+* Response: Intialized Flash object
 
 **Example payload:**
 
@@ -73,7 +73,7 @@ Initializes the Flash channel
 
 ### /multisignature
 
-Generates multisignature addresses
+Generates multisignature addresses for the channel. The first branches are intially connected. The remaining addresses of the tree are not yet used, but are stored in pool for later usage.
 
 * Type: `POST`
 * Content-Type: `application/json`
@@ -148,7 +148,7 @@ Initiates a transfer between parties in the channel.
 
 ### /sign
 
-Signs bundles (e.g. one returned from `/transfer`)
+Signs bundles (e.g. ones returned from `/transfer`). Signing bundles may result in using a mulitsignature addresses from the pool, which increases the value of `index` in the Flash object. The current value of `index` can be retrieved via `/flash`.
 
 * Type: `POST`
 * Content-Type: `application/json`
@@ -193,8 +193,8 @@ Validates and applies signed bundles
 
 * Type: `POST`
 * Content-Type: `application/json`
-* Payload: List of signed bundles to be applied to Flash object
-* Response: Updated Flash object of user
+* Payload: List of signed bundles to be applied to the Flash object
+* Response: Updated Flash object
 
 **Example payload:**
 
