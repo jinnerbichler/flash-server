@@ -48,6 +48,8 @@ It basically sets up two Flash servers for two different users and performs mult
 
 In general the state of the Flash channel is stored on the server. In this way the exchange of state objects is avoided.
 
+------
+
 ### /init
 
 Initializes the Flash channel
@@ -105,6 +107,8 @@ Generates multisignature addresses for the channel. The first branches of the tr
 }
 ```
 
+------
+
 ### /settlement
 
 Sets settlementment addresses for each user
@@ -124,6 +128,8 @@ Sets settlementment addresses for each user
 	]
 }
 ```
+
+------
 
 ### /transfer
 
@@ -146,6 +152,8 @@ Initiates a transfer between parties in the channel.
    ]
 }
 ```
+
+------
 
 ### /sign
 
@@ -186,7 +194,7 @@ Signs bundles (e.g. ones returned from `/transfer`). Signing bundles may result 
 }
 ```
 
-
+------
 
 ### /apply
 
@@ -227,6 +235,8 @@ Validates and applies signed bundles
 }
 ```
 
+------
+
 ### /close
 
 Closes the channel by computing final bundles
@@ -235,6 +245,8 @@ Closes the channel by computing final bundles
 * Content-Type: `application/json`
 * Payload: no payload
 * Response: List of final bundles
+
+------
 
 ### /fund
 
@@ -249,6 +261,8 @@ Transfers aggreed amount to users deposit address.
 
 ### /finalize
 
+------
+
 Performs proper transfers after the channel was closed. 
 
 * Type: `POST`
@@ -260,10 +274,14 @@ Performs proper transfers after the channel was closed.
 
 ### /flash
 
+------
+
 * Type: `GET`
 * Response: Current state of Flash channel (i.e. Flash object)
 
 ### /balance
+
+------
 
 * Type: `GET`
 * Response: Remaining balance of user
