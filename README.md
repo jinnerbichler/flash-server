@@ -6,7 +6,7 @@ This project basically wraps generic IOTA flash functionalities inside an Expres
 
 The following configrations can be set via setting the proper environment variable:
 
-* `IOTA_SEED`(required): Seed of this Flash server (should never leave server)
+* `IOTA_SEED`(**required**): Seed of this Flash server (should never leave server)
 * `IRI_HOST`(optional): Host of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_PORT`(optional): Port of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_TESTNET`(optional, default=false): Testnet flag of IRI node.
