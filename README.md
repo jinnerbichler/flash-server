@@ -2,8 +2,6 @@
 
 This project basically wraps generic IOTA flash functionalities inside an Express web server, which makes it possible to build non-Javascript Flash applications.
 
-**IMPORTANT:** Please clone the repository in a recursive manner (i.e. `git clone --recursive https://github.com/jinnerbichler/flash-server`) in order to get all submodles in one shot.
-
 ## Configuration Parameters
 
 The following configrations can be done via setting the proper environment variable:
