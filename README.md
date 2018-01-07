@@ -70,6 +70,7 @@ Initializes the Flash channel
 	"deposit": [3000, 1000]
 }
 ```
+------
 
 ### /multisignature
 
