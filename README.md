@@ -13,14 +13,14 @@ npm run dev
 
 The following configrations can be set via setting the proper environment variable:
 
-* `IOTA_SEED`(required): Seed of this Flash server (should never leave server)
+* `IOTA_SEED`(**required**): Seed of this Flash server (should never leave server)
 * `IRI_HOST`(optional): Host of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_PORT`(optional): Port of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_TESTNET`(optional, default=false): Testnet flag of IRI node.
 * `AUTH_USERNAME` (optional): Username of HTTP basic authentication
 * `AUTH_PASSWORD` (optional): Password of HTTP basic authentication
 
-**HTTP Basic Authentication** cat be activated by setting `AUTH_USERNAME` and `AUTH_PASSWORD`.
+**HTTP Basic Authentication** can be activated by setting `AUTH_USERNAME` and `AUTH_PASSWORD`.
 
 ## Docker Build
 
@@ -55,6 +55,8 @@ It basically sets up two Flash servers for two different users and performs mult
 
 In general the state of the Flash channel is stored on the server. In this way the exchange of state objects is avoided.
 
+------
+
 ### /init
 
 Initializes the Flash channel
@@ -70,17 +72,18 @@ Initializes the Flash channel
 {
 	"userIndex": 1,
 	"index": 1,
-    "security": 1,
-    "depth": 3,
+    	"security": 1,
+    	"depth": 3,
 	"signersCount": "2",
 	"balance": 4000,
 	"deposit": [3000, 1000]
 }
 ```
+------
 
 ### /multisignature
 
-Generates multisignature addresses for the channel. The first branches are intially connected. The remaining addresses of the tree are not yet used, but are stored in pool for later usage.
+Generates multisignature addresses for the channel. The first branches of the tree are intially connected. The remaining addresses of the tree are not yet used, but are stored in pool for later usage.
 
 * Type: `POST`
 * Content-Type: `application/json`
@@ -111,6 +114,8 @@ Generates multisignature addresses for the channel. The first branches are intia
 }
 ```
 
+------
+
 ### /settlement
 
 Sets settlementment addresses for each user
@@ -130,6 +135,8 @@ Sets settlementment addresses for each user
 	]
 }
 ```
+
+------
 
 ### /transfer
 
@@ -152,6 +159,8 @@ Initiates a transfer between parties in the channel.
    ]
 }
 ```
+
+------
 
 ### /sign
 
@@ -192,7 +201,7 @@ Signs bundles (e.g. ones returned from `/transfer`). Signing bundles may result 
 }
 ```
 
-
+------
 
 ### /apply
 
@@ -233,6 +242,8 @@ Validates and applies signed bundles
 }
 ```
 
+------
+
 ### /close
 
 Closes the channel by computing final bundles
@@ -241,6 +252,8 @@ Closes the channel by computing final bundles
 * Content-Type: `application/json`
 * Payload: no payload
 * Response: List of final bundles
+
+------
 
 ### /fund
 
@@ -253,6 +266,8 @@ Transfers aggreed amount to users deposit address.
 
 **Note:** Requires interaction with an IRI node.
 
+------
+
 ### /finalize
 
 Performs proper transfers after the channel was closed. 
@@ -264,10 +279,14 @@ Performs proper transfers after the channel was closed.
 
 **Note:** Requires interaction with an IRI node.
 
+------
+
 ### /flash
 
 * Type: `GET`
 * Response: Current state of Flash channel (i.e. Flash object)
+
+------
 
 ### /balance
 
