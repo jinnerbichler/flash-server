@@ -13,7 +13,7 @@ The following configrations can be set via setting the proper environment variab
 * `AUTH_USERNAME` (optional): Username of HTTP basic authentication
 * `AUTH_PASSWORD` (optional): Password of HTTP basic authentication
 
-**HTTP Basic Authentication** cat be activated by setting `AUTH_USERNAME` and `AUTH_PASSWORD`.
+**HTTP Basic Authentication** can be activated by setting `AUTH_USERNAME` and `AUTH_PASSWORD`.
 
 ## Docker Build
 
