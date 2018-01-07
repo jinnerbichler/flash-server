@@ -19,8 +19,10 @@ DEPOSIT = [2000, 2000]
 
 class FlashClient:
 
-    def __init__(self, url):
+    def __init__(self, url, username=None, password=None):
         self.url = url
+        self.username = username
+        self.password = password
 
     def init(self, **kwargs):
         return self._post(path='/init', **kwargs)
@@ -50,7 +52,8 @@ class FlashClient:
         return self._post(path='/finalize', **kwargs)
 
     def _post(self, path, **kwargs):
-        response = requests.post(self.url + path, json=kwargs)
+        auth = (self.username, self.password) if self.username else None
+        response = requests.post(self.url + path, json=kwargs, auth=auth)
         if response.status_code >= 400:
             logger.info(response.text)
         response.raise_for_status()
@@ -59,8 +62,8 @@ class FlashClient:
 
 # noinspection PyUnusedLocal
 def main():
-    client_one = FlashClient(url=USER_ONE_HOST)
-    client_two = FlashClient(url=USER_TWO_HOST)
+    client_one = FlashClient(url=USER_ONE_HOST, username='user_one', password='password_one')
+    client_two = FlashClient(url=USER_TWO_HOST, username='user_two', password='password_two')
 
     ##########################################################
     # Step 1: Initialise Flash channel

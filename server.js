@@ -9,6 +9,7 @@ const constants = require("./lib/iota.flash.js/lib/constants");
 const flashUtils = require("./lib/flash-utils");
 const storage = require("./lib/storage");
 const schemas = require("./lib/schemas");
+const auth = require("./lib/auth");
 
 const SEED = process.env.IOTA_SEED;  // should never leave server!
 const IRI_HOST = process.env.IRI_HOST;
@@ -17,12 +18,21 @@ const IRI_TESTNET = process.env.IRI_TESTNET || false;
 const IRI_MIN_WEIGHT = IRI_TESTNET ? 13 : 18;
 const IOTA = new iotaLib({'host': IRI_HOST, 'port': IRI_PORT});
 
+// password settings
+const AUTH_USERNAME = process.env.AUTH_USERNAME;
+const AUTH_PASSWORD = process.env.AUTH_PASSWORD;
+
 // ensure binary tree
 constants.MAX_USES = 2;
 
 let app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
+if (AUTH_USERNAME != null && AUTH_PASSWORD != null) {
+    console.log(`Enabling HTTP basic auth with user ${AUTH_USERNAME}`);
+    app.use(auth(AUTH_USERNAME, AUTH_PASSWORD));
+}
 
 // -------------------------------------------------
 // -------------- Flash Intialisation --------------

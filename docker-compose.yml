@@ -6,6 +6,8 @@ services:
     build: .
     environment:
       - "IOTA_SEED=USERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSER"
+      - "AUTH_USERNAME=user_one"
+      - "AUTH_PASSWORD=password_one"
     ports:
       - "3000:3000"
 
@@ -13,6 +15,8 @@ services:
     build: .
     environment:
       - "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSER"
+      - "AUTH_USERNAME=user_two"
+      - "AUTH_PASSWORD=password_two"
     ports:
       - "3001:3000"
 
