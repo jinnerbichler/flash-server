@@ -73,7 +73,7 @@ Initializes the Flash channel
 
 ### /multisignature
 
-Generates multisignature addresses for the channel. The first branches are intially connected. The remaining addresses of the tree are not yet used, but are stored in pool for later usage.
+Generates multisignature addresses for the channel. The first branches of the tree are intially connected. The remaining addresses of the tree are not yet used, but are stored in pool for later usage.
 
 * Type: `POST`
 * Content-Type: `application/json`
