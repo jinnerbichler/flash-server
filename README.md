@@ -1,6 +1,6 @@
 # Generic IOTA Flash Server
 
-This project basically wraps generic IOTA flash functionalities inside an Express web server, which makes it possible to build non-Javascript applications with Flash channels.
+This project basically wraps generic IOTA flash functionalities of [iota.flash.js](https://github.com/iotaledger/iota.flash.js/) inside an Express web server, which makes it possible to build non-Javascript applications with Flash channels.
 
 Start with
 
