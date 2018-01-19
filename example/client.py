@@ -5,9 +5,9 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-USER_ONE_HOST = os.environ.get('USER_ONE_HOST', 'http://flash_one:3000')
+USER_ONE_HOST = os.environ.get('USER_ONE_HOST', 'http://flash_one:3000/flash')
 USER_ONE_SETTLEMENT = 'USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9U'
-USER_TWO_HOST = os.environ.get('USER_TWO_HOST', 'http://flash_two:3000')
+USER_TWO_HOST = os.environ.get('USER_TWO_HOST', 'http://flash_two:3000/flash')
 USER_TWO_SETTLEMENT = 'USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9USERTWO9ADDRESS9U'
 
 SECURITY = 2
@@ -23,33 +23,36 @@ class FlashClient:
         self.url = url
         self.username = username
         self.password = password
+        self.channel_id = None
 
     def init(self, **kwargs):
-        return self._post(path='/init', **kwargs)
+        response = self._post(path='/init', **kwargs)
+        self.channel_id = response['channelId']
+        return response['flash']
 
     def multisignature(self, **kwargs):
-        return self._post(path='/multisignature', **kwargs)
+        return self._post(path='/multisignature/' + self.channel_id, **kwargs)
 
     def settlement(self, **kwargs):
-        return self._post(path='/settlement', **kwargs)
+        return self._post(path='/settlement/' + self.channel_id, **kwargs)
 
     def transfer(self, **kwargs):
-        return self._post(path='/transfer', **kwargs)
+        return self._post(path='/transfer/' + self.channel_id, **kwargs)
 
     def sign(self, **kwargs):
-        return self._post(path='/sign', **kwargs)
+        return self._post(path='/sign/' + self.channel_id, **kwargs)
 
     def apply(self, **kwargs):
-        return self._post(path='/apply', **kwargs)
+        return self._post(path='/apply/' + self.channel_id, **kwargs)
 
     def close(self, **kwargs):
-        return self._post(path='/close', **kwargs)
+        return self._post(path='/close/' + self.channel_id, **kwargs)
 
     def fund(self, **kwargs):
-        return self._post(path='/fund', **kwargs)
+        return self._post(path='/fund/' + self.channel_id, **kwargs)
 
     def finalize(self, **kwargs):
-        return self._post(path='/finalize', **kwargs)
+        return self._post(path='/finalize/' + self.channel_id, **kwargs)
 
     def _post(self, path, **kwargs):
         auth = (self.username, self.password) if self.username else None
@@ -69,9 +72,9 @@ def main():
     # Step 1: Initialise Flash channel
     ##########################################################
     logger.info('############# Initializing Flash channel #############')
-    user_one_flash = client_one.init(userIndex=0, index=0, security=SECURITY, depth=TREE_DEPTH,
+    user_one_flash = client_one.init(userIndex=0, security=SECURITY, depth=TREE_DEPTH,
                                      signersCount=2, balance=BALANCE, deposit=DEPOSIT)
-    user_two_flash = client_two.init(userIndex=1, index=0, security=SECURITY, depth=TREE_DEPTH,
+    user_two_flash = client_two.init(userIndex=1, security=SECURITY, depth=TREE_DEPTH,
                                      signersCount=2, balance=BALANCE, deposit=DEPOSIT)
 
     ##########################################################

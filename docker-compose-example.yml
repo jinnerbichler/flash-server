@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+
+  flash_one:
+    build: .
+    environment:
+      - "IOTA_SEED=USERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSERONEUSER"
+      - "AUTH_USERNAME=user_one"
+      - "AUTH_PASSWORD=password_one"
+      - "MONGODB_URL=mongo_one"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo_one
+
+  mongo_one:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  flash_two:
+    build: .
+    environment:
+      - "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSER"
+      - "AUTH_USERNAME=user_two"
+      - "AUTH_PASSWORD=password_two"
+      - "MONGODB_URL=mongo_two"
+    ports:
+      - "3001:3000"
+    depends_on:
+      - mongo_two
+
+  mongo_two:
+    image: mongo
+    ports:
+      - "27018:27017"
+
+  client:
+    build: example
+    depends_on:
+      - flash_one
+      - flash_two
