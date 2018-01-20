@@ -6,28 +6,24 @@ const mongoose = require("mongoose");
 const flashRoutes = require("./lib/controller/flash").router;
 const authMiddleware = require("./lib/utils").authMiddleware;
 const SourceMapSupport = require("source-map-support");
+const tokenAuth = require("./lib/token-auth");
+const config = require("./lib/config");
 
-// authentication settings
-const AUTH_USERNAME = process.env.AUTH_USERNAME;
-const AUTH_PASSWORD = process.env.AUTH_PASSWORD;
+// api authentication
+const passport = tokenAuth.init();
 
 let app = express();
+app.use(passport.initialize());
 
 // configure app
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-if (AUTH_USERNAME != null && AUTH_PASSWORD != null) {
-    console.log(`Enabling HTTP basic auth with user ${AUTH_USERNAME}`);
-    app.use(authMiddleware(AUTH_USERNAME, AUTH_PASSWORD));
-}
-
-// connect to database
-const MONGODB_URL = process.env.MONGODB_URL || 'localhost';
+// connect to database;
 mongoose.Promise = global.Promise;
 // noinspection JSUnresolvedFunction
-mongoose.connect(`mongodb://${MONGODB_URL}/flash-channel`, {});
+mongoose.connect(`mongodb://${config.MONGODB_URL}/flash-channel`, {});
 // noinspection JSUnresolvedVariable
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -38,13 +34,15 @@ SourceMapSupport.install();
 // add Flash controller
 app.use('/flash', flashRoutes);
 
+// api token generation
+app.post('/generate_token', authMiddleware(config.AUTH_USERNAME, config.AUTH_PASSWORD), tokenAuth.tokenRequestHandler);
+
 // error handler
 app.use(function (err, req, res) {
     console.log(err);
     res.status(400).json(err);
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, function () {
-    console.log(`Flash server listening on port ${port}`);
+app.listen(config.PORT, function () {
+    console.log(`Flash server listening on port ${config.PORT}`);
 });
