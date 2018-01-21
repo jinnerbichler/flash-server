@@ -35,7 +35,7 @@ SourceMapSupport.install();
 app.use('/flash', flashRoutes);
 
 // api token generation
-app.post('/generate_token', authMiddleware(config.AUTH_USERNAME, config.AUTH_PASSWORD), tokenAuth.tokenRequestHandler);
+app.post('/token', authMiddleware(config.AUTH_USERNAME, config.AUTH_PASSWORD), tokenAuth.tokenRequestHandler);
 
 // error handler
 app.use(function (err, req, res) {
