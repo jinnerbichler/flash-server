@@ -75,7 +75,7 @@ Initializes the Flash channel
 * Authentication: API token
 * Content-Type: `application/json`
 * Payload: Parameters of channel to be initialized
-* Response: Intialized Flash object
+* Response: ChannelId and intialized Flash object
 
 **Example payload:**
 
@@ -83,11 +83,26 @@ Initializes the Flash channel
 {
 	"userIndex": 1,
 	"index": 1,
-    	"security": 1,
-    	"depth": 3,
+    "security": 1,
+    "depth": 3,
 	"signersCount": "2",
 	"balance": 4000,
 	"deposit": [3000, 1000]
+}
+```
+
+**Example response:**
+
+```
+{
+    "channelId": "5a6886a87549490001674c9f",
+    "flash": {
+        "userIndex": 1,
+        "index": 896,
+        "security": 1,
+        "depth": 3,
+        ...
+    }
 }
 ```
 ------

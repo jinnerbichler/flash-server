@@ -76,6 +76,10 @@ def main():
     client_one = FlashClient(url=USER_ONE_HOST, username='user_one', password='password_one')
     client_two = FlashClient(url=USER_TWO_HOST, username='user_two', password='password_two')
 
+    ##########################################################
+    # Step 0: Authenticate Flash client
+    ##########################################################
+    logger.info('############# Authenticating Flash client ###########')
     client_one.authenticate()
     client_two.authenticate()
 
