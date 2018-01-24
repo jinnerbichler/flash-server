@@ -14,11 +14,11 @@ npm run dev
 The following configrations can be set via setting the proper environment variable:
 
 * `IOTA_SEED`(**required**): Seed of this Flash server (should never leave server)
+* `AUTH_USERNAME` (**required**): Username of HTTP basic authentication (e.g. for API token generation)
+* `AUTH_PASSWORD` (**required**): Password of HTTP basic authentication (e.g. for API token generation)
 * `IRI_HOST`(optional): Host of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_PORT`(optional): Port of IRI node. Must be set if interacting with the Tangle (e.g. `/fund` or `/finalize` API calls)
 * `IRI_TESTNET`(optional, default=false): Testnet flag of IRI node.
-* `AUTH_USERNAME` (optional): Username of HTTP basic authentication
-* `AUTH_PASSWORD` (optional): Password of HTTP basic authentication
 
 **HTTP Basic Authentication** can be activated by setting `AUTH_USERNAME` and `AUTH_PASSWORD`.
 
@@ -32,12 +32,6 @@ docker run --rm -it -p "3000:3000" -e "IOTA_SEED=<SEED>" <TAG_NAME>
 ```
 
 The server is then reachable on `http://localhost:3000`. Please have a look at `server.js` and `example/client.py` to get an overview of the implemented functionalities.
-
-**Executable Example**:
-
-```
-docker build -t jinnerbichler/flash-server .
-docker run --rm -it -p "3001:3000" -e "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSERTWOUSER" jinnerbichler/flash-server
 ```
 
 ### Demonstration Setup
@@ -45,11 +39,11 @@ docker run --rm -it -p "3001:3000" -e "IOTA_SEED=USERTWOUSERTWOUSERTWOUSERTWOUSE
 Run
 
 ```
-docker-compose up --build
+docker-compose -f docker-compose-example.yml up --build client
 ```
 
 in order to execute the example application in `example/client.py`.
-It basically sets up two Flash servers for two different users and performs multiple transfers.
+It basically sets up two Flash servers (including MongoDB instances) for two different users and performs multiple transfers.
 
 ## API Documentation
 
