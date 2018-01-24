@@ -23,37 +23,48 @@ class FlashClient:
         self.url = url
         self.username = username
         self.password = password
+        self.channel_id = None
+        self.api_token = None
+
+    def authenticate(self):
+        auth = (self.username, self.password) if self.username else None
+        response = self._post(path='/token', auth=auth)
+        self.api_token = response['token']
 
     def init(self, **kwargs):
-        return self._post(path='/init', **kwargs)
+        response = self._post(path='/flash/init', **kwargs)
+        self.channel_id = response['channelId']
+        return response['flash']
 
     def multisignature(self, **kwargs):
-        return self._post(path='/multisignature', **kwargs)
+        return self._post(path='/flash/multisignature/' + self.channel_id, **kwargs)
 
     def settlement(self, **kwargs):
-        return self._post(path='/settlement', **kwargs)
+        return self._post(path='/flash/settlement/' + self.channel_id, **kwargs)
 
     def transfer(self, **kwargs):
-        return self._post(path='/transfer', **kwargs)
+        return self._post(path='/flash/transfer/' + self.channel_id, **kwargs)
 
     def sign(self, **kwargs):
-        return self._post(path='/sign', **kwargs)
+        return self._post(path='/flash/sign/' + self.channel_id, **kwargs)
 
     def apply(self, **kwargs):
-        return self._post(path='/apply', **kwargs)
+        return self._post(path='/flash/apply/' + self.channel_id, **kwargs)
 
     def close(self, **kwargs):
-        return self._post(path='/close', **kwargs)
+        return self._post(path='/flash/close/' + self.channel_id, **kwargs)
 
     def fund(self, **kwargs):
-        return self._post(path='/fund', **kwargs)
+        return self._post(path='/flash/fund/' + self.channel_id, **kwargs)
 
     def finalize(self, **kwargs):
-        return self._post(path='/finalize', **kwargs)
+        return self._post(path='/flash/finalize/' + self.channel_id, **kwargs)
 
-    def _post(self, path, **kwargs):
-        auth = (self.username, self.password) if self.username else None
-        response = requests.post(self.url + path, json=kwargs, auth=auth)
+    def _post(self, path, auth=None, **kwargs):
+        headers = {}
+        if self.api_token:
+            headers['authorization'] = "Bearer " + self.api_token
+        response = requests.post(self.url + path, json=kwargs, auth=auth, headers=headers)
         if response.status_code >= 400:
             logger.info(response.text)
         response.raise_for_status()
@@ -65,13 +76,16 @@ def main():
     client_one = FlashClient(url=USER_ONE_HOST, username='user_one', password='password_one')
     client_two = FlashClient(url=USER_TWO_HOST, username='user_two', password='password_two')
 
+    client_one.authenticate()
+    client_two.authenticate()
+
     ##########################################################
     # Step 1: Initialise Flash channel
     ##########################################################
     logger.info('############# Initializing Flash channel #############')
-    user_one_flash = client_one.init(userIndex=0, index=0, security=SECURITY, depth=TREE_DEPTH,
+    user_one_flash = client_one.init(userIndex=0, security=SECURITY, depth=TREE_DEPTH,
                                      signersCount=2, balance=BALANCE, deposit=DEPOSIT)
-    user_two_flash = client_two.init(userIndex=1, index=0, security=SECURITY, depth=TREE_DEPTH,
+    user_two_flash = client_two.init(userIndex=1, security=SECURITY, depth=TREE_DEPTH,
                                      signersCount=2, balance=BALANCE, deposit=DEPOSIT)
 
     ##########################################################
