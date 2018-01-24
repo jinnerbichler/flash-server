@@ -55,13 +55,24 @@ It basically sets up two Flash servers for two different users and performs mult
 
 In general the state of the Flash channel is stored on the server. In this way the exchange of state objects is avoided.
 
+**Authentication**:
+
+Each endpoint of the Flash channel (i.e. /flash/*) requires an API token for authentication in the header:
+
+```
+authorization: Bearer <api_token>
+```
+
+This token can be retrieved via the `/token` endpoint (see endpoint definition below).
+
 ------
 
-### /init
+### /flash/init
 
 Initializes the Flash channel
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: Parameters of channel to be initialized
 * Response: Intialized Flash object
@@ -81,11 +92,12 @@ Initializes the Flash channel
 ```
 ------
 
-### /multisignature
+### /flash/multisignature/:channelID
 
 Generates multisignature addresses for the channel. The first branches of the tree are intially connected. The remaining addresses of the tree are not yet used, but are stored in pool for later usage.
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: Digests of all participating users
 * Response: Chained addresses for intitial tree branches
@@ -116,11 +128,33 @@ Generates multisignature addresses for the channel. The first branches of the tr
 
 ------
 
-### /settlement
+### /flash/settlement_address/:channelID
+
+Creates settlement address for user
+
+* Type: `POST`
+* Authentication: API token
+* Payload: no payload
+* Response: Updated Flash object of user
+
+**Note:** Requires interaction with an IRI node.
+
+**Example response:**
+
+```
+{
+	"address": "USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9USERONE9ADDRESS9U"
+}
+```
+
+------
+
+### /flash/settlement/:channelID
 
 Sets settlementment addresses for each user
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: Settlements addresses of all users
 * Response: Updated Flash object of user
@@ -138,11 +172,12 @@ Sets settlementment addresses for each user
 
 ------
 
-### /transfer
+### /flash/transfer/:channelID
 
 Initiates a transfer between parties in the channel.
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: List of transfers
 * Response: List of generated bundles
@@ -162,11 +197,12 @@ Initiates a transfer between parties in the channel.
 
 ------
 
-### /sign
+### /flash/sign/:channelID
 
 Signs bundles (e.g. ones returned from `/transfer`). Signing bundles may result in using a mulitsignature addresses from the pool, which increases the value of `index` in the Flash object. The current value of `index` can be retrieved via `/flash`.
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: List of bundles to be signed
 * Response: List of signed bundles
@@ -203,11 +239,12 @@ Signs bundles (e.g. ones returned from `/transfer`). Signing bundles may result 
 
 ------
 
-### /apply
+### /flash/apply/:channelID
 
 Validates and applies signed bundles
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: List of signed bundles to be applied to the Flash object
 * Response: Updated Flash object
@@ -244,22 +281,24 @@ Validates and applies signed bundles
 
 ------
 
-### /close
+### /flash/close/:channelID
 
 Closes the channel by computing final bundles
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: no payload
 * Response: List of final bundles
 
 ------
 
-### /fund
+### /flash/fund/:channelID
 
 Transfers aggreed amount to users deposit address. 
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: no payload
 * Response: List of executed transactions
@@ -268,11 +307,12 @@ Transfers aggreed amount to users deposit address.
 
 ------
 
-### /finalize
+### /flash/finalize/:channelID
 
 Performs proper transfers after the channel was closed. 
 
 * Type: `POST`
+* Authentication: API token
 * Content-Type: `application/json`
 * Payload: no payload
 * Response: List of executed transactions
@@ -281,14 +321,45 @@ Performs proper transfers after the channel was closed.
 
 ------
 
-### /flash
+### /flash/state/:channelID
 
 * Type: `GET`
+* Authentication: API token
 * Response: Current state of Flash channel (i.e. Flash object)
 
 ------
 
-### /balance
+### /flash/balance/:channelID
 
 * Type: `GET`
+* Authentication: API token
 * Response: Remaining balance of user
+
+------
+
+### /token
+
+Requests a signed API token (JWT) for channel interaction. This request requires **HTTP Basic Authentication**.
+
+* Type: `POST`
+* Authentication: HTTP Basic Auth
+* Content-Type: `application/json`
+* Payload: name of token (optional)
+* Response: Generated API token
+
+**Example requests:**
+
+```
+{
+	"name": "coffee-token"
+}
+```
+
+**Example response:**
+
+```
+{
+    "name": "coffee-token",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY29mZmVlLXRva2VuIiwiaWF0IjoxNTE2Nzk3NTQ2fQ.e3HqHkOJfrhTU1pvMzXsudz34IV22xi-fK2PIS5CfLA"
+}
+```
