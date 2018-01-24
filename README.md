@@ -57,7 +57,7 @@ In general the state of the Flash channel is stored on the server. In this way t
 
 **Authentication**:
 
-Each endpoint of the Flash channel (i.e. /flash/*) requires an API token for authentication in the header:
+Each endpoint of the Flash channel (i.e. `/flash/*`) requires an API token for authentication in the header:
 
 ```
 authorization: Bearer <api_token>
