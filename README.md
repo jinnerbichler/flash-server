@@ -83,8 +83,8 @@ Initializes the Flash channel
 {
 	"userIndex": 1,
 	"index": 1,
-    "security": 1,
-    "depth": 3,
+        "security": 1,
+        "depth": 3,
 	"signersCount": "2",
 	"balance": 4000,
 	"deposit": [3000, 1000]
