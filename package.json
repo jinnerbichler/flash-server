@@ -7,17 +7,19 @@
   "scripts": {
     "dev": "node server.js",
     "webpack": "webpack",
+    "watch": "webpack --watch",
     "start": "npm run webpack && nodemon --exec babel-node -- server.js"
   },
   "author": "Johannes Innerbichler",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.17.1",
-    "babel-preset-es2015-node6": "^0.4.0",
     "babel-cli": "^6.26.0",
+    "babel-preset-es2015-node6": "^0.4.0",
     "basic-auth": "^2.0.0",
     "body-parser": "^1.18.2",
     "dirty": "^1.1.0",
+    "ejs": "^2.5.7",
     "express": "^4.14.0",
     "express-restify-mongoose": "^4.3.0",
     "express-validation": "^1.0.2",
@@ -31,14 +33,17 @@
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.1",
     "project-name-generator": "^2.1.4",
-    "source-map-support": "^0.5.1",
-    "ejs": "^2.5.7",
     "react": "^16.1.1",
     "react-bootstrap": "^0.32.0",
     "react-dom": "^16.1.1",
+    "react-intl": "^2.4.0",
+    "react-json-view": "^1.16.0",
     "react-modal": "^3.1.2",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.0"
+    "react-scripts": "1.1.0",
+    "react-spinners": "^0.2.5",
+    "source-map-support": "^0.5.1",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "nodemon": "^1.14.7",

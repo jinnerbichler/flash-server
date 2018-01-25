@@ -10,9 +10,15 @@ const webpack = require('webpack');
 const extractPlugin = new ExtractTextPlugin({
     filename: 'main.css'
 });
-const copyFilesPlugin = new CopyWebpackPlugin([{
-    from: './frontend/index.ejs',
-}]);
+const copyFilesPlugin = new CopyWebpackPlugin([
+    {
+        from: './frontend/index.ejs',
+    },
+    {
+        from: './frontend/img/',
+        to: 'img'
+    }
+]);
 
 module.exports = {
     entry: './frontend/index.js',
@@ -26,7 +32,7 @@ module.exports = {
                 // ------------------------------------------------------------------
                 //                    Load React Components
                 // ------------------------------------------------------------------
-                test: /.jsx?$/,
+                test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
                 exclude: /node_modules/,
                 query: {
