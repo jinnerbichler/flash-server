@@ -46,12 +46,16 @@ export default class ChannelList extends React.Component {
                 <tbody>
                 {
                     this.state.flashChannels.map((channel) => {
+
+                        const isClosed = channel.isClosed != null ? channel.isClosed.toString() : false;
+                        const isFinalized = channel.isFinalized != null ? channel.isFinalized.toString() : false;
+
                         return <tr key={channel._id}>
                             <td><a href={`/#/channel/${channel._id}`}>{channel._id}</a></td>
                             <td>{channel.createdAt}</td>
                             <td><FormattedRelative value={channel.updatedAt}/></td>
-                            <td>{channel.isClosed.toString()}</td>
-                            <td>{channel.isFinalized.toString()}</td>
+                            <td>{isClosed}</td>
+                            <td>{isFinalized}</td>
                         </tr>
                     })
                 }
