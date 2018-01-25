@@ -38,6 +38,8 @@ services:
 
   client:
     build: example
+    environment:
+       - "INIT_SLEEP=3"
     depends_on:
       - flash_one
       - flash_two

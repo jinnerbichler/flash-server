@@ -2,6 +2,8 @@ import os
 import requests
 import logging
 
+import time
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -73,6 +75,9 @@ class FlashClient:
 
 # noinspection PyUnusedLocal
 def main():
+
+    time.sleep(int(os.getenv('INIT_SLEEP', 0)))
+
     client_one = FlashClient(url=USER_ONE_HOST, username='user_one', password='password_one')
     client_two = FlashClient(url=USER_TWO_HOST, username='user_two', password='password_two')
 
