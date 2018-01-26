@@ -69,7 +69,7 @@ export default class ChannelList extends React.Component {
                 <Grid>
                     <div className={"header"}>
                         <img src={"/img/iota_logo.png"}/>
-                        <h1>Flash Server Admin</h1>
+                        <h1>IOTA Flash Server Admin</h1>
                     </div>
 
                     <h3>Channels Overview</h3>

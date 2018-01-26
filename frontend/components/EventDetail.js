@@ -60,7 +60,7 @@ export default class EventDetail extends React.Component {
 
                         <div className={"header"}>
                             <img src={"/img/iota_logo.png"}/>
-                            <h1>Flash Server Admin</h1>
+                            <h1>IOTA Flash Server Admin</h1>
                         </div>
                         
                         <h3>Event Id {eventId} {type}</h3>
